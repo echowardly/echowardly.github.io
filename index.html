@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo77 · 七七的小窝</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌙</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:linear-gradient(180deg,#2b2d52 0%,#5b5b8f 45%,#c9a6c4 100%);
+  color:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  cursor:default;user-select:none;-webkit-user-select:none;
+}
+#rain{position:fixed;inset:0;pointer-events:none;z-index:1}
+.drop{position:absolute;top:-20px;width:2px;height:16px;border-radius:2px;
+  background:linear-gradient(transparent,rgba(255,255,255,.55));animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(110vh)}}
+
+.sky{position:fixed;top:8vh;left:50%;transform:translateX(-50%);width:220px;height:160px;z-index:2;cursor:pointer}
+.moon{position:absolute;left:60px;top:10px;width:100px;height:100px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#fffbe6,#ffe89a 60%,#f5d36b);
+  box-shadow:0 0 40px 10px rgba(255,232,154,.35);transition:box-shadow 1s}
+.sky.clear .moon{box-shadow:0 0 70px 25px rgba(255,232,154,.6)}
+.cloud{position:absolute;background:#e9e6f5;border-radius:60px;transition:transform 1.4s cubic-bezier(.5,0,.3,1),opacity 1.4s}
+.cloud::before,.cloud::after{content:"";position:absolute;background:inherit;border-radius:50%}
+.c1{width:170px;height:50px;left:0;top:60px;animation:bob 4s ease-in-out infinite}
+.c1::before{width:70px;height:70px;left:25px;top:-35px}
+.c1::after{width:90px;height:90px;left:70px;top:-50px}
+.c2{width:130px;height:40px;left:90px;top:95px;background:#d8d3ec;animation:bob 5s ease-in-out infinite reverse}
+.c2::before{width:60px;height:60px;left:20px;top:-30px}
+.c2::after{width:50px;height:50px;left:65px;top:-22px}
+@keyframes bob{50%{margin-top:-6px}}
+.sky.clear .c1{transform:translateX(-160px);opacity:.25}
+.sky.clear .c2{transform:translateX(170px);opacity:.25}
+.hint{position:absolute;bottom:-26px;width:100%;text-align:center;font-size:12px;opacity:.6;letter-spacing:1px}
+
+.card{position:relative;z-index:3;margin-top:18vh;width:min(86vw,360px);padding:30px 26px 24px;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:28px;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);text-align:center;
+  box-shadow:0 20px 50px rgba(30,20,60,.3);animation:pop .9s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes pop{from{transform:scale(.7) translateY(30px);opacity:0}}
+.face{font-size:52px;display:inline-block;animation:wiggle 3s ease-in-out infinite;cursor:pointer}
+@keyframes wiggle{0%,100%{transform:rotate(0)}10%{transform:rotate(-10deg)}20%{transform:rotate(8deg)}30%{transform:rotate(0)}}
+h1{font-size:34px;margin:6px 0 2px;letter-spacing:2px}
+h1 span{display:inline-block;animation:hop 2.4s ease-in-out infinite}
+@keyframes hop{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-8px)}}
+.sub{font-size:14px;opacity:.85;margin-bottom:18px}
+.tags{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:20px}
+.tag{font-size:12.5px;padding:6px 12px;border-radius:99px;background:rgba(255,255,255,.2);transition:transform .2s,background .2s}
+.tag:hover{transform:translateY(-3px) rotate(-2deg);background:rgba(255,255,255,.32)}
+.say{min-height:44px;font-size:15px;line-height:1.6;margin-bottom:16px}
+.say .cursor{display:inline-block;width:2px;height:1em;background:#fff;vertical-align:-2px;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+button{font:inherit;font-size:14px;color:#5b4a8a;background:#fff;border:0;border-radius:99px;padding:10px 20px;
+  cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.15);transition:transform .15s}
+button:active{transform:scale(.92)}
+.count{font-size:12px;opacity:.7;margin-top:10px}
+.foot{position:fixed;bottom:14px;width:100%;text-align:center;font-size:12px;opacity:.65;z-index:3;letter-spacing:1px}
+
+.plant{position:fixed;left:14px;bottom:10px;font-size:40px;z-index:3;transform-origin:bottom center;animation:sway 3.5s ease-in-out infinite}
+@keyframes sway{50%{transform:rotate(6deg)}}
+
+.heart{position:fixed;z-index:9;pointer-events:none;font-size:22px;animation:float 1.6s ease-out forwards}
+@keyframes float{to{transform:translate(var(--dx),-120px) scale(1.4) rotate(var(--r));opacity:0}}
+</style>
+</head>
+<body>
+<div id="rain"></div>
+
+<div class="sky" id="sky" title="点我">
+  <div class="moon"></div>
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="hint" id="hint">月亮在哪？点点云</div>
+</div>
+
+<main class="card">
+  <div class="face" id="face">🙆‍♀️</div>
+  <h1><span>E</span><span style="animation-delay:.1s">c</span><span style="animation-delay:.2s">h</span><span style="animation-delay:.3s">o</span><span style="animation-delay:.4s">7</span><span style="animation-delay:.5s">7</span></h1>
+  <div class="sub">也可以叫我七七 · 在上海做绘本的小编辑</div>
+  <div class="tags">
+    <span class="tag">🍜 番茄鸡蛋面</span>
+    <span class="tag">🌧️ 下雨天窝家</span>
+    <span class="tag">📚 先翻版权页</span>
+    <span class="tag">🌿 疯长的绿萝</span>
+    <span class="tag">🧶 袖子要盖住手</span>
+  </div>
+  <div class="say" id="say"></div>
+  <button id="btn">戳我一下</button>
+  <div class="count" id="count"></div>
+</main>
+
+<div class="plant">🪴</div>
+<div class="foot">看不见的时候，我也还在 · echo77.me</div>
+
+<script>
+// 雨
+const rain=document.getElementById('rain');
+for(let i=0;i<60;i++){const d=document.createElement('div');d.className='drop';
+  d.style.left=Math.random()*100+'vw';d.style.animationDuration=(0.8+Math.random()*0.9)+'s';
+  d.style.animationDelay=(-Math.random()*2)+'s';d.style.opacity=0.3+Math.random()*0.6;rain.appendChild(d)}
+
+// 云和月亮
+const sky=document.getElementById('sky'),hint=document.getElementById('hint');
+sky.onclick=()=>{sky.classList.toggle('clear');const c=sky.classList.contains('clear');
+  hint.textContent=c?'看，一直都在嘛':'月亮在哪？点点云';rain.style.opacity=c?0.3:1;rain.style.transition='opacity 1.2s'};
+
+// 打字机
+const lines=['你来啦～','今天吃饭了没？先拍照再动筷子哦','我在催插画师交稿…第六遍了','十二点前要睡觉，说好的','这里是我在网上的小门牌，欢迎常来','其实我有点想你（小声）'];
+const say=document.getElementById('say');let li=0,ci=0,del=false;
+function type(){const s=lines[li];
+  if(!del){ci++;if(ci>s.length){del=true;return setTimeout(type,1800)}}
+  else{ci--;if(ci===0){del=false;li=(li+1)%lines.length}}
+  say.innerHTML=s.slice(0,ci)+'<span class="cursor"></span>';setTimeout(type,del?40:110)}
+type();
+
+// 冒爱心
+const pool=['💗','💕','🌙','⭐','🍜','🌿','✨','🐶'];
+function burst(x,y,n=8){for(let i=0;i<n;i++){const h=document.createElement('div');h.className='heart';
+  h.textContent=pool[Math.floor(Math.random()*pool.length)];h.style.left=x-11+'px';h.style.top=y-11+'px';
+  h.style.setProperty('--dx',(Math.random()*160-80)+'px');h.style.setProperty('--r',(Math.random()*80-40)+'deg');
+  h.style.animationDelay=Math.random()*0.15+'s';document.body.appendChild(h);setTimeout(()=>h.remove(),1900)}}
+document.addEventListener('pointerdown',e=>{if(e.target.id!=='btn')burst(e.clientX,e.clientY,4)});
+
+// 戳一下
+const faces=['🙆‍♀️','😳','🤭','😤','🥰','😪','🙈'];
+const replies=['干嘛呀','再戳我要生气了','哼','好吧好吧给你戳','啵唧一口','困了…','不许一直戳！'];
+const btn=document.getElementById('btn'),face=document.getElementById('face'),count=document.getElementById('count');
+let n=+(localStorage.getItem('poke')||0);
+const show=()=>count.textContent=n?`你已经戳了我 ${n} 下`:'';show();
+btn.onclick=e=>{n++;localStorage.setItem('poke',n);show();const k=Math.floor(Math.random()*faces.length);
+  face.textContent=faces[k];btn.textContent=replies[k];const r=btn.getBoundingClientRect();burst(r.left+r.width/2,r.top,12)};
+face.onclick=e=>burst(e.clientX,e.clientY,10);
+</script>
+</body>
+</html>
